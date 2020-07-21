@@ -106,6 +106,9 @@ wget -qO- https://repo.vivaldi.com/archive/linux_signing_key.pub | sudo apt-key 
 sudo add-apt-repository 'deb https://repo.vivaldi.com/archive/deb/ stable main'
 sudo apt update && sudo apt install vivaldi-stable
 
+echo 'Launching Vivaldi on Github so you can paste your keys'
+vivaldi https://github.com/settings/keys </dev/null >/dev/null 2>&1 & disown
+
 echo 'Installing Docker'
 sudo apt-get purge docker docker-engine docker.io
 sudo apt-get install docker.io -y
