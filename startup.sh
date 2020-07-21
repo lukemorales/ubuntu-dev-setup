@@ -102,9 +102,9 @@ echo 'Installing Code Settings Sync'
 code --install-extension Shan.code-settings-sync
 
 echo 'Installing Vivaldi' 
-wget https://downloads.vivaldi.com/stable/vivaldi-stable_3.1.1929.45-1_amd64.deb
-sudo dpkg -i vivaldi-stable_3.1.1929.45-1_amd64.deb
-rm vivaldi-stable_3.1.1929.45-1_amd64.deb
+wget -qO- https://repo.vivaldi.com/archive/linux_signing_key.pub | sudo apt-key add -
+sudo add-apt-repository 'deb https://repo.vivaldi.com/archive/deb/ stable main'
+sudo apt update && sudo apt install vivaldi-stable
 
 echo 'Installing Docker'
 sudo apt-get purge docker docker-engine docker.io
