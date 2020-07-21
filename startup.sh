@@ -171,7 +171,7 @@ echo 'Installing OBS Studio'
 sudo apt-get install ffmpeg && sudo snap install obs-studio
 
 echo 'Installing Robo3t'
-snap install robo3t-snap
+sudo snap install robo3t-snap
 
 echo 'Installing Lotion'
 sudo git clone https://github.com/puneetsl/lotion.git /usr/local/lotion
