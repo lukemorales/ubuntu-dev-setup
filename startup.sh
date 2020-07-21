@@ -168,6 +168,16 @@ echo 'Updating and Cleaning Unnecessary Packages'
 sudo -- sh -c 'apt-get update; apt-get upgrade -y; apt-get full-upgrade -y; apt-get autoremove -y; apt-get autoclean -y'
 clear
 
+echo 'Installing postgis container'
+docker run --name postgis -e POSTGRES_PASSWORD=docker -p 5432:5432 -d kartoza/postgis
+
+echo 'Installing mongodb container'
+docker run --name mongodb -p 27017:27017 -d -t mongo
+
+echo 'Installing redis container'
+docker run --name redis_skylab -p 6379:6379 -d -t redis:alpine
+clear
+
 echo 'Generating GPG key'
 gpg --full-generate-key
 gpg --list-secret-keys --keyid-format LONG
