@@ -58,16 +58,29 @@ sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install
 chsh -s /bin/zsh
 
 echo 'Cloning your .zshrc from gist'
-getgist $username .zshrc
+getmy .zshrc
+source ~/.zshrc
 
 echo 'Installing FiraCode'
 sudo apt-get install fonts-firacode -y
 
 echo 'Installing NVM' 
 sh -c "$(curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash)"
+
+export NVM_DIR="$HOME/.nvm" && (
+git clone https://github.com/creationix/nvm.git "$NVM_DIR"
+cd "$NVM_DIR"
+git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
+) && \. "$NVM_DIR/nvm.sh"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 source ~/.zshrc
 clear
+nvm --version
 nvm install --lts
+nvm current
 
 echo 'Installing Yarn'
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
