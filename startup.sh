@@ -166,6 +166,15 @@ cd /usr/local/lotion && sudo ./install.sh
 
 echo 'Updating and Cleaning Unnecessary Packages'
 sudo -- sh -c 'apt-get update; apt-get upgrade -y; apt-get full-upgrade -y; apt-get autoremove -y; apt-get autoclean -y'
-clear 
+clear
+
+echo 'Generating GPG key'
+gpg --full-generate-key
+gpg --list-secret-keys --keyid-format LONG
+
+echo 'Paste the GPG key ID to export and add to your global .gitconfig'
+read gpg_key_id
+git config --global user.signingkey $gpg_key_id
+gpg --armor --export $gpg_key_id
 
 echo 'All setup, enjoy!'
