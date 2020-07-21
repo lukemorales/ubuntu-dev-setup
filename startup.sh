@@ -24,7 +24,7 @@ echo 'Installing tool to handle clipboard via CLI'
 sudo apt-get install xclip -y
 
 echo 'Installing latest git' 
-sudo add-apt-repository ppa:git-core/ppa
+sudo add-apt-repository ppa:git-core/ppa -y
 sudo apt-get update && sudo apt-get install git -y
 
 echo 'Installing python3-pip'
@@ -36,8 +36,18 @@ export GETGIST_USER=$username
 
 if [$XDG_CURRENT_DESKTOP == 'KDE'] ; then
     echo 'Cloning your Konsole configs from gist'
-    cd ~/.local/share/konsole ** rm -rf *
-    getmy OmniKonsole.profile && getmy OmniTheme.colorscheme
+    cd ~/.local/share/konsole && getmy OmniKonsole.profile && getmy OmniTheme.colorscheme
+
+    echo 'Installing Latte Dock'
+    sudo add-apt-repository ppa:kubuntu-ppa/backports -y
+    sudo apt-get update && sudo apt-get dist-upgrade
+    sudo apt-get install cmake extra-cmake-modules qtdeclarative5-dev libqt5x11extras5-dev libkf5iconthemes-dev libkf5plasma-dev libkf5windowsystem-dev libkf5declarative-dev libkf5xmlgui-dev libkf5activities-dev build-essential libxcb-util-dev libkf5wayland-dev git gettext libkf5archive-dev libkf5notifications-dev libxcb-util0-dev libsm-dev libkf5crash-dev libkf5newstuff-dev libxcb-shape0-dev libxcb-randr0-dev libx11-dev libx11-xcb-dev -y
+    sudo git clone https://github.com/KDE/latte-dock.git /usr/local/latte-dock
+    cd /usr/local/latte-dock && sudo sh install.sh
+
+    echo 'Installing Kvantum Manager'
+    sudo add-apt-repository ppa:papirus/papirus -y
+    sudo apt-get update && sudo apt install qt5-style-kvantum -y
 fi
 
 echo "Setting up your git global user name and email"
@@ -55,10 +65,14 @@ cat ~/.ssh/id_rsa.pub | xclip -selection clipboard
 echo 'Installing ZSH'
 sudo apt-get install zsh -y
 sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
-chsh -s /bin/zsh
+chsh -s $(which zsh)
 
 echo 'Cloning your .zshrc from gist'
 getmy .zshrc
+
+echo 'Installing Spaceship ZSH Theme'
+git clone https://github.com/denysdovhan/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt"
+ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
 source ~/.zshrc
 
 echo 'Installing FiraCode'
@@ -78,6 +92,8 @@ export NVM_DIR="$HOME/.nvm"
 
 source ~/.zshrc
 clear
+
+echo 'Installing NodeJS LTS'
 nvm --version
 nvm install --lts
 nvm current
@@ -90,6 +106,7 @@ echo '"--emoji" true' >> ~/.yarnrc
 
 echo 'Installing Typescript, AdonisJS CLI and Lerna'
 yarn global add typescript @adonisjs/cli lerna
+clear
 
 echo 'Installing VSCode'
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
@@ -100,10 +117,12 @@ sudo apt-get update && sudo apt-get install code -y
 
 echo 'Installing Code Settings Sync'
 code --install-extension Shan.code-settings-sync
+sudo apt-get install gnome-keyring -y
+cls
 
 echo 'Installing Vivaldi' 
 wget -qO- https://repo.vivaldi.com/archive/linux_signing_key.pub | sudo apt-key add -
-sudo add-apt-repository 'deb https://repo.vivaldi.com/archive/deb/ stable main'
+sudo add-apt-repository 'deb https://repo.vivaldi.com/archive/deb/ stable main' -y
 sudo apt update && sudo apt install vivaldi-stable
 
 echo 'Launching Vivaldi on Github so you can paste your keys'
@@ -118,7 +137,7 @@ docker --version
 
 sudo groupadd docker
 sudo usermod -aG docker $USER
-chmod 777 /var/run/docker.sock
+sudo chmod 777 /var/run/docker.sock
 
 echo 'Installing docker-compose'
 sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -132,7 +151,7 @@ heroku --version
 echo 'Installing PostBird'
 wget -c https://github.com/Paxa/postbird/releases/download/0.8.4/Postbird_0.8.4_amd64.deb
 sudo dpkg -i Postbird_0.8.4_amd64.deb
-sudo apt-get install -f && rm Postbird_0.8.4_amd64.deb
+sudo apt-get install -f -y && rm Postbird_0.8.4_amd64.deb
 
 echo 'Installing Insomnia Core and Omni Theme' 
 echo "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
@@ -140,11 +159,11 @@ echo "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
 wget --quiet -O - https://insomnia.rest/keys/debian-public.key.asc \
   | sudo apt-key add -
 sudo apt-get update && sudo apt-get install insomnia -y
-cd ~/.config/Insomnia/plugins
+mkdir ~/.config/Insomnia/plugins && cd ~/.config/Insomnia/plugins
 git clone https://github.com/Rocketseat/insomnia-omni.git omni-theme && cd ~
 
 echo 'Installing Android Studio'
-sudo add-apt-repository ppa:maarten-fonville/android-studio
+sudo add-apt-repository ppa:maarten-fonville/android-studio -y
 sudo apt-get update && sudo apt-get install android-studio -y
 
 echo 'Installing VLC'
@@ -154,12 +173,12 @@ sudo apt-get install vlc-plugin-access-extra libbluray-bdj libdvdcss2 -y
 echo 'Installing Discord'
 wget -O discord.deb "https://discordapp.com/api/download?platform=linux&format=deb"
 sudo dpkg -i discord.deb
-sudo apt-get install -f && rm discord.deb
+sudo apt-get install -f -y && rm discord.deb
 
 echo 'Installing Zoom'
 wget -c https://zoom.us/client/latest/zoom_amd64.deb
 sudo dpkg -i zoom_amd64.deb
-sudo apt-get install -f && rm zoom_amd64.deb
+sudo apt-get install -f -y && rm zoom_amd64.deb
 
 echo 'Installing Spotify' 
 curl -sS https://download.spotify.com/debian/pubkey.gpg | sudo apt-key add -
@@ -167,11 +186,16 @@ echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sou
 sudo apt-get update && sudo apt-get install spotify-client -y
 
 echo 'Installing Peek' 
-sudo add-apt-repository ppa:peek-developers/stable
+sudo add-apt-repository ppa:peek-developers/stable -y
 sudo apt-get update && sudo apt-get install peek -y
 
 echo 'Installing OBS Studio'
 sudo apt-get install ffmpeg && sudo snap install obs-studio
+
+echo 'Enabling KVM for Android Studio'
+sudo apt-get install qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils virt-manager -y
+sudo adduser $USER libvirt
+sudo adduser $USER libvirt-qemu
 
 echo 'Installing Robo3t'
 sudo snap install robo3t-snap
