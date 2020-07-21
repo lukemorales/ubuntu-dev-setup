@@ -1,218 +1,153 @@
-echo "Welcome! Let's start setting up your system xD It could take more than 10 minutes, be patient"
+echo "Welcome! Let's start setting up your system. It could take more than 10 minutes, be patient"
+cd ~
+read git_config_user_email
+read username
 
-sudo apt-get update
+sudo apt update
 
-echo 'installing curl' 
+echo 'Installing curl' 
 sudo apt install curl -y
 
-echo 'installing vim'
-sudo apt install vim -y
-clear
+echo 'Installing tool to handle clipboard via CLI'
+sudo apt install xclip -y
 
-echo 'installing git' 
-sudo apt install git -y
+echo 'Installing latest git' 
+sudo add-apt-repository ppa:git-core/ppa
+sudo apt update && sudo apt install git -y
 
-echo "What name do you want to use in GIT user.name?"
-echo "For example, mine will be \"Olavio Lacerda\""
-read git_config_user_name
-git config --global user.name "$git_config_user_name"
-clear 
+echo 'Installing python3 pip'
+sudo apt install python3-pip -y
 
-echo "What email do you want to use in GIT user.email?"
-echo "For example, mine will be \"olavio.lacerda@hotmail.com\""
-read git_config_user_email
-git config --global user.email $git_config_user_email
-clear
+echo 'Installing getgist to download dot files from gist'
+sudo pip3 install getgist
 
-echo "Can I set VIM as your default GIT editor for you? (y/n)"
-read git_core_editor_to_vim
-if echo "$git_core_editor_to_vim" | grep -iq "^y" ;then
-	git config --global core.editor vim
-else
-	echo "Okay, no problem. :) Let's move on!"
-fi
+echo 'Cloning your Konsole configs from gist'
+cd ~/.local/share/konsole
+rm -rf *
+getgist $username OmniKonsole.profile && getgist $username OmniTheme.colorscheme
 
-echo "Generating a SSH Key"
+echo 'Cloning your .gitconfig from gist'
+getgist $username .gitconfig
+
+echo 'Generating a SSH Key'
 ssh-keygen -t rsa -b 4096 -C $git_config_user_email
 ssh-add ~/.ssh/id_rsa
 cat ~/.ssh/id_rsa.pub | xclip -selection clipboard
 
-echo 'enabling workspaces for both screens' 
-gsettings set org.gnome.mutter workspaces-only-on-primary false
-
-echo 'installing zsh'
-sudo apt-get install zsh -y
+echo 'Installing ZSH'
+sudo apt install zsh -y
 sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
 chsh -s /bin/zsh
 
-echo 'installing tool to handle clipboard via CLI'
-sudo apt-get install xclip -y
+echo 'Cloning your .zshrc from gist'
+getgist $username .zshrc
 
-export alias pbcopy='xclip -selection clipboard'
-export alias pbpaste='xclip -selection clipboard -o'
+echo 'Installing FiraCode'
+sudo apt install fonts-firacode -y
+
+echo 'Installing NVM' 
+sh -c "$(curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash)"
 source ~/.zshrc
+clear
+nvm install --lts
 
-echo 'installing code'
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-sudo apt-get install apt-transport-https -y
-sudo apt-get update
-sudo apt-get install code -y # or code-insiders
+echo 'Installing Yarn'
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+sudo apt update && sudo apt install --no-install-recommends yarn
+echo '"--emoji" true' >> ~/.yarnrc
 
-echo 'installing extensions'
+echo 'Installing VSCode'
+curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+sudo apt install apt-transport-https -y
+sudo apt update && sudo apt install code -y
+
+echo 'Installing Code Settings Sync'
 code --install-extension Shan.code-settings-sync
 
-echo 'installing spotify' 
-snap install spotify
-
-echo 'installing chrome' 
+echo 'Installing Chrome' 
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo dpkg -i google-chrome-stable_current_amd64.deb
+rm google-chrome-stable_current_amd64.deb
 
-echo 'installing nvm' 
-sh -c "$(curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash)"
+echo 'Installing Typescript, AdonisJS CLI and Lerna'
+yarn global add typescript @adonisjs/cli lerna
 
-export NVM_DIR="$HOME/.nvm" && (
-git clone https://github.com/creationix/nvm.git "$NVM_DIR"
-cd "$NVM_DIR"
-git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
-) && \. "$NVM_DIR/nvm.sh"
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-source ~/.zshrc
-nvm --version
-nvm install 12
-nvm alias default 12
-node --version
-npm --version
-
-echo 'installing Typescript'
-npm install -g typescript
-
-echo 'installing Create React App'
-npm install -g create-react-app
-
-echo 'installing autosuggestions' 
-git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
-echo "source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> ~/.zshrc
-source ~/.zshrc
-
-echo 'installing theme'
-sudo apt install fonts-firacode -y
-wget -O ~/.oh-my-zsh/themes/node.zsh-theme https://raw.githubusercontent.com/skuridin/oh-my-zsh-node-theme/master/node.zsh-theme 
-sed -i 's/.*ZSH_THEME=.*/ZSH_THEME="node"/g' ~/.zshrc
-
-echo 'installing franz' 
-wget https://github.com/meetfranz/franz/releases/download/v5.1.0/franz_5.1.0_amd64.deb -O franz.deb
-sudo dpkg -i franz.debchristian-kohler.path-intellisense
-sudo apt-get install -y -f 
-
-echo 'installing terminator'
-sudo apt-get update
-sudo apt-get install terminator -y
-
-echo 'adding dracula theme' 
-cat <<EOF >  ~/.config/terminator/config
-[global_config]
-  title_transmit_bg_color = "#ad7fa8"
-[keybindings]
-  close_term = <Primary>w
-  close_window = <Primary>q
-  new_tab = <Primary>t
-  new_window = <Primary>i
-  paste = <Primary>v
-  split_horiz = <Primary>e
-  split_vert = <Primary>d
-  switch_to_tab_1 = <Primary>1
-  switch_to_tab_10 = <Primary>0
-  switch_to_tab_2 = <Primary>2
-  switch_to_tab_3 = <Primary>3
-  switch_to_tab_4 = <Primary>4
-  switch_to_tab_5 = <Primary>5
-  switch_to_tab_6 = <Primary>6
-[layouts]
-  [[default]]
-    [[[child1]]]
-      parent = window0
-      type = Terminal
-    [[[window0]]]
-      parent = ""
-      type = Window
-[plugins]
-[profiles]
-  [[default]]
-    cursor_color = "#aaaaaa"
-EOF
-
-
-cat <<EOF >>  ~/.config/terminator/config
-[[Dracula]]
-    background_color = "#1e1f29"
-    background_darkness = 0.88
-    background_type = transparent
-    copy_on_selection = True
-    cursor_color = "#bbbbbb"
-    foreground_color = "#f8f8f2"
-    palette = "#000000:#ff5555:#50fa7b:#f1fa8c:#bd93f9:#ff79c6:#8be9fd:#bbbbbb:#555555:#ff5555:#50fa7b:#f1fa8c:#bd93f9:#ff79c6:#8be9fd:#ffffff"
-    scrollback_infinite = True
-EOF
-
-echo 'installing docker' 
-sudo apt-get remove docker docker-engine docker.io
+echo 'Installing Docker'
+sudo apt purge docker docker-engine docker.io
 sudo apt install docker.io -y
 sudo systemctl start docker
 sudo systemctl enable docker
 docker --version
 
+sudo groupadd docker
+sudo usermod -aG docker $USER
 chmod 777 /var/run/docker.sock
-docker run hello-world
 
-echo 'installing docker-compose' 
-sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+echo 'Installing docker-compose'
+sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 docker-compose --version
 
-echo 'installing kubectl'
-curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-
-echo 'installing heroku-cli'
+echo 'Installing HEROKU-CLI'
 curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 heroku --version
 
-echo 'installing aws-cli' 
-sudo apt-get install awscli -y
-aws --version
-curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb"
-sudo dpkg -i session-manager-plugin.deb
-session-manager-plugin --version
+echo 'Installing PostBird'
+wget -c https://github.com/Paxa/postbird/releases/download/0.8.4/Postbird_0.8.4_amd64.deb
+sudo dpkg -i Postbird_0.8.4_amd64.deb
+rm Postbird_0.8.4_amd64.deb
 
-echo 'installing fzf'
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install --all
+echo 'Installing Insomnia and Omni Theme' 
+echo "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
+  | sudo tee -a /etc/apt/sources.list.d/insomnia.list
+wget --quiet -O - https://insomnia.rest/keys/debian-public.key.asc \
+  | sudo apt-key add -
+sudo apt update && sudo apt install insomnia -y
+cd ~/.config/Insomnia/plugins
+git clone https://github.com/Rocketseat/insomnia-omni.git omni-theme && cd ~
 
-echo 'installing dbeaver'
-wget -c https://dbeaver.io/files/6.0.0/dbeaver-ce_6.0.0_amd64.deb
-sudo dpkg -i dbeaver-ce_6.0.0_amd64.deb
-sudo apt-get install -f
+echo 'Installing Android Studio'
+sudo add-apt-repository ppa:maarten-fonville/android-studio
+sudo apt update && sudo apt install android-studio -y
 
-echo 'installing Robo3t'
-snap install robo3t-snap
-
-echo 'installing Postman' 
-snap install postman
-
-echo 'installing vlc'
+echo 'Installing VLC'
 sudo apt install vlc -y
 sudo apt install vlc-plugin-access-extra libbluray-bdj libdvdcss2 -y
 
-echo 'installing transmission'
-sudo add-apt-repository ppa:transmissionbt/ppa
-sudo apt-get update
-sudo apt-get install transmission transmission-qt -y
+echo 'Installing Discord'
+wget -O discord.deb "https://discordapp.com/api/download?platform=linux&format=deb"
+sudo dpkg -i discord.deb
+rm discord.deb
 
+echo 'Installing Zoom'
+wget -c https://zoom.us/client/latest/zoom_amd64.deb
+sudo dpkg -i zoom_amd64.deb
+rm zoom_amd64.deb
+
+echo 'Installing Spotify' 
+curl -sS https://download.spotify.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+sudo apt update && sudo apt install spotify-client -y
+
+echo 'Installing Peek' 
+sudo add-apt-repository ppa:peek-developers/stable
+sudo apt update && sudo apt install peek -y
+
+echo 'Installing OBS Studio'
+sudo apt install ffmpeg && sudo snap install obs-studio
+
+echo 'Installing Robo3t'
+snap install robo3t-snap
+
+echo 'Installing Lotion'
+sudo git clone https://github.com/puneetsl/lotion.git /usr/local/lotion
+cd /usr/local/lotion && sudo ./install.sh
+
+echo 'Updating All Packages'
+sudo -- sh -c 'apt update; apt upgrade -y; apt full-upgrade -y; apt autoremove -y; apt autoclean -y'
 clear 
 
 echo 'All setup, enjoy!'
