@@ -116,7 +116,7 @@ heroku --version
 echo 'Installing PostBird'
 wget -c https://github.com/Paxa/postbird/releases/download/0.8.4/Postbird_0.8.4_amd64.deb
 sudo dpkg -i Postbird_0.8.4_amd64.deb
-rm Postbird_0.8.4_amd64.deb
+sudo apt-get install -f && rm Postbird_0.8.4_amd64.deb
 
 echo 'Installing Insomnia Core and Omni Theme' 
 echo "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
@@ -138,12 +138,12 @@ sudo apt-get install vlc-plugin-access-extra libbluray-bdj libdvdcss2 -y
 echo 'Installing Discord'
 wget -O discord.deb "https://discordapp.com/api/download?platform=linux&format=deb"
 sudo dpkg -i discord.deb
-rm discord.deb
+sudo apt-get install -f && rm discord.deb
 
 echo 'Installing Zoom'
 wget -c https://zoom.us/client/latest/zoom_amd64.deb
 sudo dpkg -i zoom_amd64.deb
-rm zoom_amd64.deb
+sudo apt-get install -f && rm zoom_amd64.deb
 
 echo 'Installing Spotify' 
 curl -sS https://download.spotify.com/debian/pubkey.gpg | sudo apt-key add -
