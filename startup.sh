@@ -1,9 +1,18 @@
 echo "Welcome! Let's start setting up your system. It could take more than 10 minutes, be patient"
-cd ~
+
+echo "What name do you want to use in GIT user.name?"
+echo "For example, mine will be \"Luke Morales\""
+read git_config_user_name
+
+echo "What email do you want to use in GIT user.email?"
+echo "For example, mine will be \"lukemorales@live.com\""
 read git_config_user_email
+
+echo "What is your github username?"
+echo "For example, mine will be \"lukemorales\""
 read username
 
-sudo apt-get update
+cd ~ && sudo apt-get update
 
 echo 'Installing curl' 
 sudo apt-get install curl -y
@@ -31,6 +40,10 @@ if [$XDG_CURRENT_DESKTOP == 'KDE']
     cd ~/.local/share/konsole
     rm -rf *
     getmy OmniKonsole.profile && getmy OmniTheme.colorscheme
+
+echo "Setting up your git global user name and email"
+git config --global user.name "$git_config_user_name"
+git config --global user.email $git_config_user_email
 
 echo 'Cloning your .gitconfig from gist'
 getmy .gitconfig
