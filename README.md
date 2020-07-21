@@ -1,5 +1,7 @@
 # Linux Workstation Setup
 
+![CI](https://github.com/lukemorales/ubuntu-dev-setup/workflows/CI/badge.svg)
+
 This configs were made based on [Erick Wendel's setup](https://github.com/ErickWendel/ew-ubuntu-setup) and my own needs as a JS Developer and other personal stuff.
 
 ## Getting Started
