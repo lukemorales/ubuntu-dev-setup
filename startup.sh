@@ -34,12 +34,11 @@ echo 'Installing getgist to download dot files from gist'
 sudo pip3 install getgist
 export GETGIST_USER=$username
 
-if [$XDG_CURRENT_DESKTOP == 'KDE']
-  then
+if [$XDG_CURRENT_DESKTOP == 'KDE'] ; then
     echo 'Cloning your Konsole configs from gist'
-    cd ~/.local/share/konsole
-    rm -rf *
+    cd ~/.local/share/konsole ** rm -rf *
     getmy OmniKonsole.profile && getmy OmniTheme.colorscheme
+fi
 
 echo "Setting up your git global user name and email"
 git config --global user.name "$git_config_user_name"
