@@ -222,6 +222,9 @@ echo 'Installing redis container'
 docker run --name redis_skylab -p 6379:6379 -d -t redis:alpine
 clear
 
+echo 'Bumping the max file watchers'
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
 echo 'Generating GPG key'
 gpg --full-generate-key
 gpg --list-secret-keys --keyid-format LONG
