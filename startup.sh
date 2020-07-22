@@ -70,6 +70,10 @@ chsh -s $(which zsh)
 echo 'Cloning your .zshrc from gist'
 getmy .zshrc
 
+echo 'Indexing snap to ZSH'
+sudo chmod 777 /etc/zsh/zprofile
+echo "emulate sh -c 'source /etc/profile.d/apps-bin-path.sh'" >> /etc/zsh/zprofile
+
 echo 'Installing Spaceship ZSH Theme'
 git clone https://github.com/denysdovhan/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt"
 ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
